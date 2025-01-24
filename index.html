@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Images to PDF Converter</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Image to PDF Converter</h1>
+        <div class="image-input">
+            <label for="image-input">Choose Images</label>
+            <input type="file" id="image-input" multiple accept="image/png, image/jpeg">
+        </div>
+        <ul id="image-list"></ul>
+        <button id="clear-list" class="clear-button">Clear List</button>
+        <button class="generate-button" id="generate-pdf">Generate PDF</button>
+
+        <!-- Spinner -->
+        <div id="spinner" class="spinner hidden">
+            <div class="spinner-circle"></div>
+            <p>Generating PDF...</p>
+        </div>
+
+        <footer>
+            Developed with ❤️ by <a id="footer-link" href="https://eg.linkedin.com/in/ahmedelbedfy" target="_blank"
+                rel="noopener">Ahmed
+                Khaled</a> using JavaScript.
+        </footer>
+    </div>
+</body>
+<script src="renderer.js"></script>
+
+</html>

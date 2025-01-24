@@ -1,0 +1,43 @@
+{
+  "name": "image-to-pdf-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "Elbedfy.images-to-pdf-app",
+    "productName": "Images to PDF Converter",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "images/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "images/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "images/icon.png"
+    }
+  },
+  "keywords": [],
+  "author": "Ahmed Elbedfy",
+  "license": "MIT",
+  "type": "commonjs",
+  "description": "An app to convert images to PD",
+  "devDependencies": {
+    "electron": "^33.3.1"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}
