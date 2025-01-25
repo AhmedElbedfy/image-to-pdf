@@ -1,26 +1,33 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, shell } = require('electron');
 const { PDFDocument } = require('pdf-lib');
 const fs = require('fs');
-const { shell } = require('electron');
 
+// DOM Elements
 const imageInput = document.getElementById('image-input');
 const imageList = document.getElementById('image-list');
 const generatePdfButton = document.getElementById('generate-pdf');
+const pageSizeSelect = document.getElementById('page-size');
+const compressImagesCheckbox = document.getElementById('compress-images');
+const spinner = document.getElementById('spinner');
+const footerLink = document.getElementById('footer-link');
+const clearListButton = document.getElementById('clear-list');
 
+
+// State
 let images = [];
 
-// Handle Image Selection
-imageInput.addEventListener('change', (event) => {
-    images = Array.from(event.target.files).map((file) => ({
-        name: file.name,
-        type: file.type,
-        file,
-        previewUrl: URL.createObjectURL(file), // Create preview URL
-    }));
-    updateImageList();
-});
+// Constants
+const PAGE_SIZES = {
+    A4: { width: 595.28, height: 841.89 }, // A4 size in points
+    Letter: { width: 612, height: 792 },   // Letter size in points
+    Legal: { width: 612, height: 1008 },   // Legal size in points
+};
 
-// Update UI for Image List with Previews and Drag-and-Drop
+// Helper Functions
+
+/**
+ * Updates the UI to display the selected images as thumbnails.
+ */
 function updateImageList() {
     imageList.innerHTML = '';
     images.forEach((image, index) => {
@@ -32,26 +39,28 @@ function updateImageList() {
         img.className = 'image-thumbnail';
 
         const name = document.createElement('span');
+        name.className = 'image-list-name';
         name.textContent = image.name;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.innerHTML = '🗑️';
+        deleteButton.className = 'delete-button';
+        deleteButton.addEventListener('click', () => {
+            images.splice(index, 1);
+            updateImageList();
+        });
 
         li.appendChild(img);
         li.appendChild(name);
+        li.appendChild(deleteButton);
 
         // Drag-and-Drop Functionality
         li.draggable = true;
-
-        li.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', index);
-        });
-
-        li.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
+        li.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', index));
+        li.addEventListener('dragover', (e) => e.preventDefault());
         li.addEventListener('drop', (e) => {
             const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
             const toIndex = parseInt(li.dataset.index, 10);
-
             [images[fromIndex], images[toIndex]] = [images[toIndex], images[fromIndex]];
             updateImageList();
         });
@@ -60,18 +69,49 @@ function updateImageList() {
     });
 }
 
-const spinner = document.getElementById('spinner');
-
-async function toggleSpinner(visible) {
-    if (visible) {
-        spinner.classList.add('visible');
-    } else {
-        spinner.classList.remove('visible');
-    }
+/**
+ * Toggles the visibility of the spinner.
+ * @param {boolean} visible - Whether the spinner should be visible.
+ */
+function toggleSpinner(visible) {
+    spinner.classList.toggle('visible', visible);
 }
 
-// Generate PDF with Spinner
-generatePdfButton.addEventListener('click', async () => {
+/**
+ * Compresses an image using a canvas element.
+ * @param {File} imageFile - The image file to compress.
+ * @returns {Promise<Uint8Array>} - The compressed image as a Uint8Array.
+ */
+async function compressImage(imageFile) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(
+                (blob) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(new Uint8Array(reader.result));
+                    reader.onerror = () => reject(new Error('Error reading compressed image.'));
+                    reader.readAsArrayBuffer(blob);
+                },
+                'image/jpeg', // Use JPEG for compression
+                0.7 // Quality (0.7 = 70% compression)
+            );
+        };
+        img.onerror = () => reject(new Error('Failed to load the image for compression.'));
+        img.src = URL.createObjectURL(imageFile);
+    });
+}
+
+/**
+ * Generates a PDF from the selected images.
+ */
+async function generatePdf() {
     if (images.length === 0) {
         alert('Please select images first!');
         return;
@@ -81,17 +121,12 @@ generatePdfButton.addEventListener('click', async () => {
         toggleSpinner(true); // Show the spinner
 
         const pdfDoc = await PDFDocument.create();
+        const pageSize = PAGE_SIZES[pageSizeSelect.value] || PAGE_SIZES.A4;
 
         for (const image of images) {
-            const fileReader = new FileReader();
-
-            const imgBytes = await new Promise((resolve, reject) => {
-                fileReader.onload = () => resolve(new Uint8Array(fileReader.result));
-                fileReader.onerror = () => reject(new Error('Error reading image file.'));
-                fileReader.readAsArrayBuffer(image.file);
-            });
-
+            const imgBytes = await readImageFile(image.file);
             let img;
+
             if (image.type === 'image/jpeg') {
                 img = await pdfDoc.embedJpg(imgBytes);
             } else if (image.type === 'image/png') {
@@ -101,8 +136,22 @@ generatePdfButton.addEventListener('click', async () => {
                 continue;
             }
 
-            const page = pdfDoc.addPage([img.width, img.height]);
-            page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+            if (compressImagesCheckbox.checked) {
+                const compressedImgBytes = await compressImage(image.file);
+                img = await pdfDoc.embedJpg(compressedImgBytes);
+            }
+
+            const scale = Math.min(pageSize.width / img.width, pageSize.height / img.height);
+            const scaledWidth = img.width * scale;
+            const scaledHeight = img.height * scale;
+
+            const page = pdfDoc.addPage([pageSize.width, pageSize.height]);
+            page.drawImage(img, {
+                x: (pageSize.width - scaledWidth) / 2, // Center the image horizontally
+                y: (pageSize.height - scaledHeight) / 2, // Center the image vertically
+                width: scaledWidth,
+                height: scaledHeight,
+            });
         }
 
         const pdfBytes = await pdfDoc.save();
@@ -120,22 +169,43 @@ generatePdfButton.addEventListener('click', async () => {
     } finally {
         toggleSpinner(false); // Hide the spinner
     }
+}
+
+/**
+ * Reads an image file as a Uint8Array.
+ * @param {File} file - The image file to read.
+ * @returns {Promise<Uint8Array>} - The image file as a Uint8Array.
+ */
+function readImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.onload = () => resolve(new Uint8Array(fileReader.result));
+        fileReader.onerror = () => reject(new Error('Error reading image file.'));
+        fileReader.readAsArrayBuffer(file);
+    });
+}
+
+// Event Listeners
+
+imageInput.addEventListener('change', (event) => {
+    images = Array.from(event.target.files).map((file) => ({
+        name: file.name,
+        type: file.type,
+        file,
+        previewUrl: URL.createObjectURL(file),
+    }));
+    updateImageList();
 });
 
-// Get the footer link element
-const footerLink = document.getElementById('footer-link');
+generatePdfButton.addEventListener('click', generatePdf);
 
-// Add a click event listener to the link
 footerLink.addEventListener('click', (event) => {
-    event.preventDefault(); // Prevent the default link behavior
-    const url = footerLink.href; // Get the link URL
-    shell.openExternal(url); // Open the link in the default browser
+    event.preventDefault();
+    shell.openExternal(footerLink.href);
 });
-
-const clearListButton = document.getElementById('clear-list');
 
 clearListButton.addEventListener('click', () => {
-    images = []; // Clear the images array
-    updateImageList(); // Update the UI
+    images = [];
+    updateImageList();
     alert('Image list cleared!');
 });

@@ -1,128 +1,178 @@
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f9f9f9;
+    background: linear-gradient(120deg, #9abaff, #c4fadf, #ebc2fb);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #333;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Keyframes for dynamic background shift */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .container {
-    width: 90%;
-    max-width: 500px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-block: 5%;
-}
-
-h1 {
-    font-size: 24px;
+    width: 80%;
+    max-width: 900px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
+/* Header */
+h1 {
+    font-size: 2.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Image Input */
 .image-input {
     display: flex;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 2.5rem;
+    /* color: #fff; */
 }
 
-#image-input {
+.white {
+    color: #fff;
+}
+
+.image-input label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #28a745;
+    color: white;
+    padding: 0.9rem 1.7rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.image-input input[type="file"] {
     display: none;
 }
 
-label {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
+.image-input label:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Image List */
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 1rem 2.2rem;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
-    text-align: center;
-    transition: 0.3s;
-}
-
-label:hover {
-    background-color: #0056b3;
-}
-
-#image-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px;
-}
-
-#image-list li {
-    padding: 10px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: move;
-    transition: 0.3s;
-}
-
-#image-list li:hover {
-    background-color: #e9e9e9;
-}
-
-.image-thumbnail {
-    height: 40px;
-    width: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-right: 10px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
 }
 
 .generate-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
     color: white;
-    background-color: #28a745;
+    background-color: #007bff;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
 .generate-button:hover {
-    background-color: #218838;
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
-/* Clear Image Button */
 .clear-button {
-    background-color: #ff4d4d;
+    background-color: #dc3545;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
+    margin-top: 1.2rem;
 }
 
 .clear-button:hover {
-    background-color: #ff1a1a;
+    background-color: #bb2d3a;
+    transform: scale(1.05);
+}
+
+/* Options */
+.options {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.options label {
+    flex-basis: 48%;
+    font-size: 1.1rem;
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.options input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.options select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.options select:hover {
+    border-color: #007bff;
 }
 
 /* Footer */
 footer {
     text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-    color: #333;
-    margin-top: 20px;
+    padding: 1.5rem;
+    background-color: #fff;
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 2.5rem;
 }
 
-/* Spinner Styles */
+footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Spinner */
 .spinner {
     position: fixed;
     top: 0;
@@ -131,41 +181,202 @@ footer {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0.3s, opacity 0.3s;
-  }
+    transition:
+        visibility 0.3s,
+        opacity 0.3s;
+}
 
-  .spinner.visible {
+.spinner.visible {
     visibility: visible;
     opacity: 1;
-  }
+}
 
-  .spinner-circle {
+.spinner-circle {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #007bff;
+    border-top: 6px solid #28a745;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     animation: spin 1s linear infinite;
-  }
+}
 
-  @keyframes spin {
+@keyframes spin {
     from {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
+}
 
-  .spinner p {
+.spinner p {
     color: white;
     margin-top: 15px;
-    font-size: 18px;
-  }
-</style>
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .options {
+        flex-direction: column;
+    }
+
+    .options label {
+        flex-basis: 100%;
+    }
+
+    .image-thumbnail {
+        height: 120px;
+    }
+}
+
+/* Custom Checkbox Styles */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        border-color 0.3s,
+        box-shadow 0.3s ease-in-out;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Checked State */
+input[type="checkbox"]:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "✅";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 2px;
+    transform: scale(1.2);
+}
+
+/* Hover and Focus states */
+input[type="checkbox"]:hover {
+    border-color: #0056b3;
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+/* Label Styling */
+label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+    transition: color 0.3s ease-in-out;
+}
+
+/* On hover of label */
+label:hover {
+    color: #007bff;
+}
+
+/* Label and Checkbox alignment */
+label input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Style on label hover to change text color */
+label input[type="checkbox"]:hover + span {
+    color: #0056b3;
+}
+
+span {
+    font-size: 1rem;
+    color: #333;
+    transition: color 0.3s ease-in-out;
+}
+
+/* Focus ring for the label */
+label:focus-within {
+    outline: 2px solid #007bff;
+    outline-offset: 4px;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Change Here                                */
+/* -------------------------------------------------------------------------- */
+
+/* Image List */
+#image-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    gap: 1.8rem;
+}
+
+/* Image List Item */
+#image-list li {
+    width: 100%; /* Full width of the container */
+    background-color: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab; /* Change cursor to pointer */
+}
+
+/* Hover Effect for Image Item */
+#image-list li:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px); /* Slight lift effect */
+}
+
+/* Image Thumbnail */
+.image-thumbnail {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Optional Text Below Image */
+#image-list li p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+.image-list-name {
+    color: #007bff;
+    padding: 0 0 10px;
+}

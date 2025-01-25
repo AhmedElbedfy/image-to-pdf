@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Images to PDF Converter</title>
-
+    <title>Image to PDF Converter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,26 +12,47 @@
     <div class="container">
         <h1>Image to PDF Converter</h1>
         <div class="image-input">
-            <label for="image-input">Choose Images</label>
-            <input type="file" id="image-input" multiple accept="image/png, image/jpeg">
+            <label for="image-input">
+                <span class="white">Choose Images</span>
+                <input type="file" id="image-input" multiple accept="image/png, image/jpeg">
+            </label>
         </div>
         <ul id="image-list"></ul>
-        <button id="clear-list" class="clear-button">Clear List</button>
+
+        <div class="options">
+            <label for="compress-images">
+                <input type="checkbox" id="compress-images">
+                <span>Compress Images</span>
+            </label>
+
+            <label for="page-size">
+                <span>Page Size:</span>
+                <select id="page-size">
+                    <option value="A4">A4 (210 x 297 mm)</option>
+                    <option value="Letter">Letter (216 x 279 mm)</option>
+                    <option value="Legal">Legal (216 x 356 mm)</option>
+                </select>
+            </label>
+        </div>
+
+        <br>
+
+        <!-- <button id="clear-list" class="clear-button">Clear List</button> -->
         <button class="generate-button" id="generate-pdf">Generate PDF</button>
 
-        <!-- Spinner -->
         <div id="spinner" class="spinner hidden">
             <div class="spinner-circle"></div>
             <p>Generating PDF...</p>
         </div>
 
         <footer>
-            Developed with ❤️ by <a id="footer-link" href="https://eg.linkedin.com/in/ahmedelbedfy" target="_blank"
-                rel="noopener">Ahmed
-                Khaled</a> using JavaScript.
+            Developed with ❤️ by
+            <a href="https://eg.linkedin.com/in/ahmedelbedfy" target="_blank" rel="noopener">Ahmed Khaled</a>
+            using JavaScript.
         </footer>
     </div>
+
+    <script src="renderer.js"></script>
 </body>
-<script src="renderer.js"></script>
 
 </html>
